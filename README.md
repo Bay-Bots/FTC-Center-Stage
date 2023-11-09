@@ -1,4 +1,1 @@
-# CenterStage
-
-2023-2024 School year
-Oyster Bay
+FTC Robotics 2023-2024
