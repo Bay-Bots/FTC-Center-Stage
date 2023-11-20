@@ -32,9 +32,9 @@ public class RobotStructure extends OpMode {
    public DcMotor Arm2;
     public TouchSensor limit1;
     public TouchSensor limit2;
-    public Servo servo65;
     public DcMotor tapeMotor;
-    public Servo 
+    public Servo dragBlock;
+    public Servo launcher;
 
     @Override
     public void init() {
@@ -49,9 +49,11 @@ public class RobotStructure extends OpMode {
         Arm2 = hardwareMap.get(DcMotor.class, "Arm2"); // 1
         Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        servo65 = hardwareMap.get(Servo.class, "servo65");
+        
+
         tapeMotor = hardwareMap.get(DcMotor.class, "tapeMotor");
-        d
+        dragBlock = hardwareMap.get(Servo.class, "dragBlock");
+        launcher = hardwareMap.get(Servo.class, "launcher");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
