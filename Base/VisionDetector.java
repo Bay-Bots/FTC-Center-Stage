@@ -14,14 +14,13 @@ public class VisionDetector {
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/blue1.tflite";
     private static final String[] LABELS = {"Team Element"};
 
-    private TfodProcessor tfod;
-    private VisionPortal visionPortal;
-
+    public TfodProcessor tfod;
+    public VisionPortal visionPortal;
     public VisionDetector(LinearOpMode opMode) {
         initTfod(opMode);
     }
 
-    private void initTfod(LinearOpMode opMode) {
+    public void initTfod(LinearOpMode opMode) {
         tfod = new TfodProcessor.Builder()
                 .setModelFileName("blue1.tflite")
                 .build();
@@ -36,16 +35,19 @@ public class VisionDetector {
     }
 
     public void startDetection() {
-        visionPortal.stopStreaming();
+        visionPortal.resumeStreaming();
     }
 
     public void stopDetection() {
-        visionPortal.resumeStreaming();
+        visionPortal.stopStreaming();
     }
 
     public List<Recognition> getRecognitions() {
         return tfod.getRecognitions();
     }
+    public List<Recognition> getObjects() {
+    return tfod.getRecognitions();
+}
 
     public void telemetryTfod(LinearOpMode opMode) {
         List<Recognition> currentRecognitions = getRecognitions();
@@ -54,7 +56,13 @@ public class VisionDetector {
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2;
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
-
+            if (x > -10 && x < 290) {
+                    telemetry.addData("Left position", ".");
+                    telemetry.update();
+            } else if (x > 300 && x < 575) {
+                    telemetry.addData("Middle position", ".");
+                    telemetry.update();
+            } else 
             opMode.telemetry.addData("", " ");
             opMode.telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             opMode.telemetry.addData("- Position", "%.0f / %.0f", x, y);
