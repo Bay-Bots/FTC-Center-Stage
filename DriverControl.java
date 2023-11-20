@@ -35,23 +35,10 @@ while (gamepad1.dpad_up){
 while (gamepad1.dpad_right){
     translateRight(0.25);
 
-     if (!gamepad1.dpad_right){
-        translateRight(0);
-    } 
 }
 while (gamepad1.dpad_left){
     translateLeft(0.25);
-
-      if (!gamepad1.dpad_left){
-        translateLeft(0);
-    }
 }  
-
-if (gamepad2.dpad_down) {
-    Arm2.setPower(0.1);
-}   else if (gamepad2.dpad_up) {
-    Arm2.setPower(-0.1);
-}    
     
 //if(gamepad2.a) {
 //setClawPos(1, 1);opens 
@@ -68,15 +55,27 @@ if (gamepad2.dpad_down) {
 if(gamepad2.a) {
 //setClawPos(1, 1);opens 
 //servoClaw1.setPosition(0.55);
-servoClaw2.setPosition(0.59);
+servoClaw2.setPosition(0.34);
+}
+
+if(gamepad2.x) {
+servoClaw1.setPosition(0.59);    
 }
 
 if(gamepad2.b) {
 // setClawPos(0.5, 0.5); closes
 //servoClaw1.setPosition(0.35);
-servoClaw2.setPosition(.34);
+servoClaw2.setPosition(.59);
+servoClaw1.setPosition(.34);
 }
 
+if (gamepad2.y) {
+    launcher.setPosition(.43);
+}
+
+if (gamepad2.b) {
+    launcher.setPosition(.86);
+}
     
 if (gamepad1.a) {
         tapeMotor.setPower(1.0);
@@ -84,6 +83,12 @@ if (gamepad1.a) {
         tapeMotor.setPower(-1.0);
     } else {
         tapeMotor.setPower(0);
+    }  if(gamepad1.x) {
+        dragBlock.setPosition(.24); 
+        if(gamepad1.y) 
+        dragBlock.setPosition(.64);
     }
-}
+
+
+    }
 }
