@@ -13,6 +13,7 @@ public class VisionDetector {
     private static final boolean USE_WEBCAM = true;
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/blue1.tflite";
     private static final String[] LABELS = {"Team Element"};
+    public int position = 0;
 
     public TfodProcessor tfod;
     public VisionPortal visionPortal;
@@ -52,17 +53,26 @@ public class VisionDetector {
     public void telemetryTfod(LinearOpMode opMode) {
         List<Recognition> currentRecognitions = getRecognitions();
         opMode.telemetry.addData("# Objects Detected", currentRecognitions.size());
-
+// setDriverMotorPower(double FRightPower, double FLeftPower, double BRightPower, double BLeftPower, int s)
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2;
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
+            While (position = 0) {
             if (x > -10 && x < 290) {
                     telemetry.addData("Left position", ".");
                     telemetry.update();
+                    position = 1
+                   // setDriverMotorPower(1, 1, 1, 1, 500);
             } else if (x > 300 && x < 575) {
                     telemetry.addData("Middle position", ".");
                     telemetry.update();
-            } else 
+                    position = 2;
+                 //   setDriverMotorPower(1, 1, 1, 1, 500);
+            } else {
+                    telemetry.addData("Right position", ".");
+                    position = 3;
+            }
+            }
             opMode.telemetry.addData("", " ");
             opMode.telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             opMode.telemetry.addData("- Position", "%.0f / %.0f", x, y);
