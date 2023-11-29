@@ -6,10 +6,11 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.teamcode.Base.AutoRobotStruct;
 
 import java.util.List;
 
-public class VisionDetector {
+public class VisionDetector extends AutoRobotStruct {
     private static final boolean USE_WEBCAM = true;
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/blue1.tflite";
     private static final String[] LABELS = {"Team Element"};
@@ -57,22 +58,30 @@ public class VisionDetector {
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2;
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
-            While (position = 0) {
             if (x > -10 && x < 290) {
-                    telemetry.addData("Left position", ".");
-                    telemetry.update();
-                    position = 1
+                    opMode.telemetry.addData("Left position", ".");
+                    position = 1;
+                    
                    // setDriverMotorPower(1, 1, 1, 1, 500);
             } else if (x > 300 && x < 575) {
-                    telemetry.addData("Middle position", ".");
-                    telemetry.update();
+                    opMode.telemetry.addData("Middle position", ".");
+                    opMode.telemetry.addData("Line = ", atLine);
                     position = 2;
                  //   setDriverMotorPower(1, 1, 1, 1, 500);
+                    if (atLine = false) {
+                        while (atLine = false) {
+                            setDriverMotorPower(0.5, 0.5, 0.5, 0.5);
+
+                        }
+                    }
+
             } else {
-                    telemetry.addData("Right position", ".");
+                    opMode.telemetry.addData("Right position", ".");
                     position = 3;
+                    moveToLine();
+
             }
-            }
+
             opMode.telemetry.addData("", " ");
             opMode.telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             opMode.telemetry.addData("- Position", "%.0f / %.0f", x, y);
