@@ -67,13 +67,15 @@ public class CenterstageAutonomous extends AutoRobotStruct {
                 }
             }
                 // Move to the line (you can adjust the power and duration)
-                while (hsvValues[0] > 50) {
-                setDriverMotorPower(-0.15,-0.15,-0.15,-0.15);
-                    if (hsvValues[0] > 50) {
-                        setDriverMotorZero();
-                        telemetry.addData("ON", "LINE");
-                    }
-               }
+                while (!atLine && position > 0) {
+                    setDriverMotorPower(-0.15,-0.15,-0.15,-0.15);
+                    telemetry.addData("ON", "LINE");
+                if (atLine) {
+                    setDriverMotorZero();
+                telemetry.addData("ON", "LINE");
+                atLine = false; // Reset the atLine variable
+    }
+}
 
             // Update telemetry data
             telemetry.addData("At Line: ", atLine);
