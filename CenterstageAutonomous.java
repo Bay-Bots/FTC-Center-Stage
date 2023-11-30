@@ -21,7 +21,6 @@ import java.util.List;
 public class CenterstageAutonomous extends AutoRobotStruct {
 
     // Declare global variables
-    private boolean atLine = false;
     private double x;
     private double y;
 
