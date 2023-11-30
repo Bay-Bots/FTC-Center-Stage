@@ -82,15 +82,10 @@ if (gamepad2.b) {
     launcher.setPosition(.86);
 }
     
-if (gamepad1.a) {
-        tapeMotor.setPower(1.0);
-    } else if (gamepad1.b) {
-        tapeMotor.setPower(-1.0);
-    } else {
-        tapeMotor.setPower(0);
+
     }  if(gamepad1.x) {
         dragBlock.setPosition(.24); 
-        if(gamepad1.y) 
+    } if(gamepad1.y) 
         dragBlock.setPosition(.64);
     }
 
