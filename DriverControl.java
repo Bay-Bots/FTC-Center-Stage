@@ -34,10 +34,15 @@ while (gamepad1.dpad_up){
 
 while (gamepad1.dpad_right){
     translateRight(0.25);
+     if (!gamepad1.dpad_right){
+        setDriverPowerZERO();
 
 }
 while (gamepad1.dpad_left){
     translateLeft(0.25);
+        if (!gamepad1.dpad_left){
+        setDriverPowerZERO();
+
 }  
     
 //if(gamepad2.a) {
