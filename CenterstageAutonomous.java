@@ -1,63 +1,35 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Base.AutoRobotStruct;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.teamcode.VisionDetectorOne;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import android.graphics.Color;
-import android.view.View;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import java.util.List;
-
 
 @Autonomous(name = "CenterstageAutonomous")
 public class CenterstageAutonomous extends AutoRobotStruct {
 
-    // Declare global variables
     private double x;
     private double y;
+    private VisionDetectorOne visionDetector;
 
-    // Create an instance of VisionDetector
-    VisionDetectorOne visionDetector;
-
-    // Create color sensor object
-    private ColorSensor colorSensor;
 
     @Override
     public void runOpMode() {
         visionDetector = new VisionDetectorOne(this);
-
-        // Declare motors and servos
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
-        // Start TensorFlow Object Detection
         visionDetector.startDetection();
+        initRunner();
 
         waitForStart();
 
         while (opModeIsActive()) {
-
-    if (gamepad1.a) {
-        tapeMotor.setPower(1.0);
-    } else if (gamepad1.b) {
-        tapeMotor.setPower(-1.0);
-    } else {
-        tapeMotor.setPower(0);
-    }  if(gamepad1.x) {
-        dragBlock.setPosition(.24); 
-        if(gamepad1.y) 
-        dragBlock.setPosition(.64);
-    }
-
-            // Read color values
             float[] hsvValues = readColor(colorSensor);
             List<Recognition> recognitions = visionDetector.getRecognitions();
             visionDetector.telemetryTfod(this);
@@ -69,10 +41,39 @@ public class CenterstageAutonomous extends AutoRobotStruct {
                 x = (recognition.getLeft() + recognition.getRight()) / 2;
                 y = (recognition.getTop() + recognition.getBottom()) / 2;
 
-            } else {
-                
+                // Movement logic based on the detected position
+                if (x > -10 && x < 290) {
+                    telemetry.addData("Left position", ".");
+                    telemetry.addData("Line = ", atLine);
+                    position = 1;
+                    sleep(250);
+                    visionDetector.stopDetection();
+
+                } else if (x > 300 && x < 575) {
+                    telemetry.addData("Middle position", ".");
+                    telemetry.addData("Line = ", atLine);
+                    position = 2;
+                    sleep(250);
+                    visionDetector.stopDetection();
+
+
+                } else {
+                    telemetry.addData("Right position", ".");
+                    telemetry.addData("Line = ", atLine);
+                    position = 3;
+                    sleep(250);
+                    visionDetector.stopDetection();
+
+                }
             }
-            // Check if the robot is on the line
+                // Move to the line (you can adjust the power and duration)
+                while (hsvValues[0] > 50) {
+                setDriverMotorPower(-0.15,-0.15,-0.15,-0.15);
+                    if (hsvValues[0] > 50) {
+                        setDriverMotorZero();
+                        telemetry.addData("ON", "LINE");
+                    }
+               }
 
             // Update telemetry data
             telemetry.addData("At Line: ", atLine);
@@ -84,16 +85,7 @@ public class CenterstageAutonomous extends AutoRobotStruct {
 
     public float[] readColor(ColorSensor colorSensor) {
         float hsvValues[] = {0F, 0F, 0F};
-        final float values[] = hsvValues;
-
-        boolean bPrevState = false;
-        boolean bCurrState = false;
-
-        boolean bLedOn = true;
-
-        bPrevState = bCurrState;
         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
-
         return hsvValues;
     }
 }
