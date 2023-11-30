@@ -61,16 +61,14 @@ public class CenterstageAutonomous extends AutoRobotStruct {
             } 
 
             // Check if the robot is on the line
-            if (hsvValues[0] < 25) {
-                atLine = true;
-                telemetry.addData("On", "the line!");
-                telemetry.update();
-
-                // Perform actions upon reaching the line
-                // (e.g., lift servo, initiate other movements)
-            } else {
-                atLine = false;
-            }
+            if (atLine = false) {
+                visionDetector.stopDetection():
+                while (atLine = false) {
+                    setDriverMotorPower(0.3, 0.3, 0.3, 0.3);
+                        if (atLine = true) {
+                            setDriverMotorPower(0.0, 0.0, 0.0, 0.0);
+                        }
+                    }
 
             // Update telemetry data
             telemetry.addData("At Line: ", atLine);
