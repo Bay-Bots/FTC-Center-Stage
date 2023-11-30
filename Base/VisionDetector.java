@@ -60,27 +60,26 @@ public class VisionDetector extends AutoRobotStruct {
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
             if (x > -10 && x < 290) {
                     opMode.telemetry.addData("Left position", ".");
+                    opMode.telemetry.addData("Line = ", atLine);
                     position = 1;
-                    
-                   // setDriverMotorPower(1, 1, 1, 1, 500);
+                    break;
             } else if (x > 300 && x < 575) {
                     opMode.telemetry.addData("Middle position", ".");
                     opMode.telemetry.addData("Line = ", atLine);
                     position = 2;
-                 //   setDriverMotorPower(1, 1, 1, 1, 500);
-                    if (atLine = false) {
-                        while (atLine = false) {
-                            setDriverMotorPower(0.5, 0.5, 0.5, 0.5);
-
-                        }
-                    }
-
+                    break;
             } else {
                     opMode.telemetry.addData("Right position", ".");
+                    opMode.telemetry.addData("Line = ", atLine);
                     position = 3;
-                    moveToLine();
-
-            }
+                    break;
+            } if (atLine = false) {
+                while (atLine = false) {
+                    setDriverMotorPower(0.3, 0.3, 0.3, 0.3);
+                        if (atLine = true) {
+                            setDriverMotorPower(0.0, 0.0, 0.0, 0.0);
+                        }
+                    }
 
             opMode.telemetry.addData("", " ");
             opMode.telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
