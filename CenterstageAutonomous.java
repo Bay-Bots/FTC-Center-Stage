@@ -18,7 +18,6 @@ public class CenterstageAutonomous extends AutoRobotStruct {
     private double y;
     private VisionDetectorOne visionDetector;
 
-
     @Override
     public void runOpMode() {
         visionDetector = new VisionDetectorOne(this);
@@ -30,7 +29,6 @@ public class CenterstageAutonomous extends AutoRobotStruct {
         waitForStart();
 
         while (opModeIsActive()) {
-            float[] hsvValues = readColor(colorSensor);
             List<Recognition> recognitions = visionDetector.getRecognitions();
             visionDetector.telemetryTfod(this);
             telemetry.update();
@@ -48,34 +46,40 @@ public class CenterstageAutonomous extends AutoRobotStruct {
                     position = 1;
                     sleep(250);
                     visionDetector.stopDetection();
-
                 } else if (x > 300 && x < 575) {
                     telemetry.addData("Middle position", ".");
                     telemetry.addData("Line = ", atLine);
                     position = 2;
                     sleep(250);
                     visionDetector.stopDetection();
-
-
                 } else {
                     telemetry.addData("Right position", ".");
                     telemetry.addData("Line = ", atLine);
                     position = 3;
                     sleep(250);
                     visionDetector.stopDetection();
+                }
 
+                // Move to the line
+                while (!atLine && position > 0) {
+                    setDriverMotorPower(-0.15, -0.15, -0.15, -0.15);
+                    telemetry.addData("OFF", "LINE");
+                    telemetry.update();
+
+                    // Check for the line detection condition
+                    float[] hsvValues = readColor(colorSensor);
+                     if (hsvValues[0] < 25) {
+                        atLine = true;
+                        setDriverMotorZero();
+                        break; // Exit the loop after reaching the line
+                    } else {
+                        atLine = false;
+                    }
+
+                    // Add a sleep to prevent continuous updates and provide time for the robot to stop
+                    sleep(100);
                 }
             }
-                // Move to the line (you can adjust the power and duration)
-                while (!atLine && position > 0) {
-                    setDriverMotorPower(-0.15,-0.15,-0.15,-0.15);
-                    telemetry.addData("ON", "LINE");
-                if (atLine) {
-                    setDriverMotorZero();
-                telemetry.addData("ON", "LINE");
-                atLine = false; // Reset the atLine variable
-    }
-}
 
             // Update telemetry data
             telemetry.addData("At Line: ", atLine);
@@ -87,6 +91,7 @@ public class CenterstageAutonomous extends AutoRobotStruct {
 
     public float[] readColor(ColorSensor colorSensor) {
         float hsvValues[] = {0F, 0F, 0F};
+        colorSensor.enableLed(true); // Assuming you want to turn ON the LED
         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
         return hsvValues;
     }
