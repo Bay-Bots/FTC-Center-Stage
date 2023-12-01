@@ -16,18 +16,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
 public class AutoRobotStruct extends LinearOpMode {
-    public DcMotor motorFrontRight;
-    public DcMotor motorFrontLeft;
-    public DcMotor motorBackRight;
-    public DcMotor motorBackLeft;
+    DcMotor motorFrontRight;
+    DcMotor motorFrontLeft;
+    DcMotor motorBackRight;
+    DcMotor motorBackLeft;
     public Servo servoClaw1;
     public Servo servoClaw2;
     public ColorSensor colorSensor;
     public boolean bLedOn = true;
-    public boolean atLine;
+    public boolean atLine = false;
     public String estColor;
+    public int position = 0;
 
-    // accessed in RedDuck.java directly without get/set methods therefore not private vars
 
     @Override
     public void runOpMode() throws InterruptedException { }
@@ -39,7 +39,6 @@ public class AutoRobotStruct extends LinearOpMode {
         motorBackRight = hardwareMap.get(DcMotor.class, "motorBackRight"); // 0
         servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1");
         servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2");
-        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
 
 
 
@@ -48,9 +47,7 @@ public class AutoRobotStruct extends LinearOpMode {
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    public double getDistanceFront() {
-        return ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
-    }
+
     //telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
 
 
@@ -61,14 +58,7 @@ public class AutoRobotStruct extends LinearOpMode {
         motorBackLeft.setPower(BLeftPower);
         motorBackRight.setPower(BRightPower);
     }
-
-    public void setDriverMotorPower(double FRightPower, double FLeftPower, double BRightPower, double BLeftPower, int s) {
-        motorFrontRight.setPower(FRightPower);
-        motorFrontLeft.setPower(FLeftPower);
-        motorBackLeft.setPower(BLeftPower);
-        motorBackRight.setPower(BRightPower);
-        sleep(s);
-    } public void setDriverMotorZero() {
+     public void setDriverMotorZero() {
         motorFrontRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorBackLeft.setPower(0);
@@ -90,7 +80,17 @@ public class AutoRobotStruct extends LinearOpMode {
         motorBackLeft.setPower(m);
         motorBackRight.setPower(-m);
         
-    } 
+    } public void moveToLine() {
+        while (!atLine) {
+        setDriverMotorPower(0.25, 0.25, 0.25, 0.25);
+    }
+    setDriverMotorPower(0, 0, 0, 0);
+    sleep(750);
+}
+
+    
+    
+    
           public float[] readColor(ColorSensor colorSensor) {
         float hsvValues[] = {0F,0F,0F};
         final float values[] = hsvValues;
@@ -112,6 +112,16 @@ public class AutoRobotStruct extends LinearOpMode {
         telemetry.addData("Saturation", "%.3f", hsvValues[1]);
         telemetry.update();
         
+        if (hsvValues[0] < 25) {
+                atLine = true;
+                telemetry.addData("On", "the line!");
+                telemetry.update();
+
+                // Perform actions upon reaching the line
+                // (e.g., lift servo, initiate other movements)
+            } else {
+                atLine = false;
+            }
         // int[] colorValues = {colorSensor.red(), colorSensor.green(), colorSensor.blue()};
         return hsvValues;
     }
