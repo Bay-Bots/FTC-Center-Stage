@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
-
+import org.firstinspires.ftc.teamcode.Base.AutoRobotStruct;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-import org.firstinspires.ftc.teamcode.Base.AutoRobotStruct;
 
 import java.util.List;
 
@@ -15,6 +14,7 @@ public class VisionDetectorOne extends AutoRobotStruct {
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
+    private boolean detectionActive = true; // Track the detection status
 
     public VisionDetectorOne(LinearOpMode opMode) {
         initTfod(opMode);
@@ -35,10 +35,12 @@ public class VisionDetectorOne extends AutoRobotStruct {
     }
 
     public void startDetection() {
+        detectionActive = true;
         visionPortal.resumeStreaming();
     }
 
     public void stopDetection() {
+        detectionActive = false;
         visionPortal.stopStreaming();
     }
 
@@ -51,6 +53,10 @@ public class VisionDetectorOne extends AutoRobotStruct {
     }
 
     public void telemetryTfod(LinearOpMode opMode) {
+        if (!detectionActive) {
+            return; // Skip telemetry if detection is not active
+        }
+
         List<Recognition> currentRecognitions = getRecognitions();
         opMode.telemetry.addData("# Objects Detected", currentRecognitions.size());
 
