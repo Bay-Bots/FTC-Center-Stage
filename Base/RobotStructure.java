@@ -24,8 +24,6 @@ public class RobotStructure extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    DcMotorEx motorArmLeft;
-    DcMotorEx motorArmRight;
    public Servo servoClaw1;
    public Servo servoClaw2;
     public DcMotor Arm1;
@@ -35,6 +33,7 @@ public class RobotStructure extends OpMode {
     public DcMotor tapeMotor;
     public Servo dragBlock;
     public Servo launcher;
+    public DcMotor chainMotor;
 
     @Override
     public void init() {
@@ -47,8 +46,10 @@ public class RobotStructure extends OpMode {
         servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2"); // 2
         Arm1 = hardwareMap.get(DcMotor.class, "Arm1"); // 0
         Arm2 = hardwareMap.get(DcMotor.class, "Arm2"); // 1
+        chainMotor = hardwareMap.get(DcMotor.class, "chainMotor"); 
         Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        chainMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         
 
         tapeMotor = hardwareMap.get(DcMotor.class, "tapeMotor");
@@ -78,6 +79,7 @@ public class RobotStructure extends OpMode {
         float backLeftPower = -gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
         float backRightPower = -gamepad1LeftY - gamepad1LeftX + gamepad1RightX;
         float armPower = gamepad2RightY;
+        float chainPower = gamepad2LeftY;
         //  float armPower2= gamepad2LeftY;
 
 
@@ -86,7 +88,61 @@ public class RobotStructure extends OpMode {
         motorFrontRight.setPower(frontRightPower);
         motorBackRight.setPower(backRightPower);
         Arm1.setPower(armPower);
-        Arm2.setPower(armPower);    
+        Arm2.setPower(armPower);  
+        chainMotor.setPower(chainPower);
+        int encoderCount = Arm2.getCurrentPosition();
+        telemetry.addData("encoder:", encoderCount);
+        telemetry.update();
+        
+        int armPositionScore = 1287;
+        int armPositionDrive = 92;
+        int armPositionGrab = -167;
+        int chainPositionScore = 0;
+        int chainPositionDrive = 0;
+        int chainPositionGrab = 0;
+        
+        if (gamepad2.a) {
+        Arm1.setTargetPosition(armPositionScore);
+        Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm1.setPower(.5);
+        Arm2.setTargetPosition(armPositionScore);
+        Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm2.setPower(.5);
+        
+        }
+        while (Arm1.isBusy()) {
+            telemetry.addData("Moving to Score Position", "...");
+            telemetry.update();
+        }
+
+        
+         if (gamepad2.x) {
+        Arm1.setTargetPosition(armPositionGrab);
+        Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm1.setPower(.5);
+        Arm2.setTargetPosition(armPositionGrab);
+        Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm2.setPower(.5);
+        
+        while (Arm1.isBusy()) {
+            telemetry.addData("Moving to Score Position", "...");
+            telemetry.update();
+        }
+        }
+        if (gamepad2.y) {
+            Arm1.setTargetPosition(armPositionDrive);
+            Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm1.setPower(.5);
+            Arm2.setTargetPosition(armPositionDrive);
+            Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm2.setPower(.5);
+        
+        while (Arm1.isBusy()){
+            telemetry.addData("Moving to Score Position", "...");
+            telemetry.update();
+        }
+        }
+        
         /*
         Plug in arm motor to slot 0 on expansion hub (Not control hub)
         Go into driver tablet, go to configuration, obhs, control hub portal -> expansion hub-> DC motors
