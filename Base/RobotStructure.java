@@ -102,33 +102,38 @@ public class RobotStructure extends OpMode {
         int chainPositionGrab = 0;
         
         if (gamepad2.a) {
-        Arm1.setTargetPosition(armPositionScore);
-        Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Arm1.setPower(.5);
-        Arm2.setTargetPosition(armPositionScore);
-        Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Arm2.setPower(.5);
+            Arm1.setTargetPosition(armPositionScore);
+            Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm1.setPower(.5);
+            Arm2.setTargetPosition(armPositionScore);
+            Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm2.setPower(.5);
+            chainMotor.setTargetPosition(chainPositionScore);
+            chainMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            chainMotor.setPower(.6);
         
-        }
-        while (Arm1.isBusy()) {
-            telemetry.addData("Moving to Score Position", "...");
-            telemetry.update();
-        }
+            while (Arm1.isBusy()) {
+                telemetry.addData("Moving to Score Position", "...");
+                telemetry.update();
+        }}
 
         
          if (gamepad2.x) {
-        Arm1.setTargetPosition(armPositionGrab);
-        Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Arm1.setPower(.5);
-        Arm2.setTargetPosition(armPositionGrab);
-        Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Arm2.setPower(.5);
+            Arm1.setTargetPosition(armPositionGrab);
+            Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm1.setPower(.5);
+            Arm2.setTargetPosition(armPositionGrab);
+            Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm2.setPower(.5);
+            chainMotor.setTargetPosition(chainPositionGrab);
+            chainMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            chainMotor.setPower(.6);
         
         while (Arm1.isBusy()) {
             telemetry.addData("Moving to Score Position", "...");
             telemetry.update();
-        }
-        }
+        }}
+        
         if (gamepad2.y) {
             Arm1.setTargetPosition(armPositionDrive);
             Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -136,12 +141,34 @@ public class RobotStructure extends OpMode {
             Arm2.setTargetPosition(armPositionDrive);
             Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm2.setPower(.5);
+                        chainMotor.setTargetPosition(chainPositionScore);
+            chainMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            chainMotor.setPower(.6);
         
         while (Arm1.isBusy()){
             telemetry.addData("Moving to Score Position", "...");
             telemetry.update();
-        }
-        }
+        }}
+
+        int duration = 2000; // Duration in milliseconds
+
+if (gamepad2.rightBumper) {
+    long startTime = System.currentTimeMillis();
+    while (System.currentTimeMillis() - startTime < duration) {
+        double currentPos = launcher.getPosition();
+        double targetPos = 0.73; // Target position for the launcher servo
+
+        // Calculate the incremental position change based on time elapsed
+        double deltaPos = (targetPos - currentPos) * (System.currentTimeMillis() - startTime) / duration;
+
+        // Update the launcher servo position
+        launcher.setPosition(currentPos + deltaPos);
+    }
+    // Set the launcher servo to the final target position
+    launcher.setPosition(0.73);
+}
+
+
         
         /*
         Plug in arm motor to slot 0 on expansion hub (Not control hub)
