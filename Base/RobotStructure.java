@@ -47,6 +47,8 @@ public class RobotStructure extends OpMode {
         Arm1 = hardwareMap.get(DcMotor.class, "Arm1"); // 0
         Arm2 = hardwareMap.get(DcMotor.class, "Arm2"); // 1
         chainMotor = hardwareMap.get(DcMotor.class, "chainMotor"); 
+
+        launcher.setPosition(0.70);
         Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         chainMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -152,11 +154,11 @@ public class RobotStructure extends OpMode {
 
         int duration = 2000; // Duration in milliseconds
 
-if (gamepad2.rightBumper) {
+if (gamepad1.rightBumper) {
     long startTime = System.currentTimeMillis();
     while (System.currentTimeMillis() - startTime < duration) {
         double currentPos = launcher.getPosition();
-        double targetPos = 0.73; // Target position for the launcher servo
+        double targetPos = 0.72; // Target position for the launcher servo
 
         // Calculate the incremental position change based on time elapsed
         double deltaPos = (targetPos - currentPos) * (System.currentTimeMillis() - startTime) / duration;
@@ -165,7 +167,7 @@ if (gamepad2.rightBumper) {
         launcher.setPosition(currentPos + deltaPos);
     }
     // Set the launcher servo to the final target position
-    launcher.setPosition(0.73);
+    launcher.setPosition(targetPos);
 }
 
 
