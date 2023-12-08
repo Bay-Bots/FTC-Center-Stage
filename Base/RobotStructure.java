@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -24,7 +25,7 @@ public class RobotStructure extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-   public Servo servoClaw1;
+    public Servo servoClaw1;
    public Servo servoClaw2;
     public DcMotor Arm1;
    public DcMotor Arm2;
@@ -33,7 +34,10 @@ public class RobotStructure extends OpMode {
     public DcMotor tapeMotor;
     public Servo dragBlock;
     public Servo launcher;
+    public Servo tapeHold;
     public DcMotor chainMotor;
+    public Servo tapeRelease;
+    
 
     @Override
     public void init() {
@@ -42,17 +46,25 @@ public class RobotStructure extends OpMode {
         motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight"); // 2
         motorBackLeft = hardwareMap.get(DcMotor.class, "motorBackLeft"); // 1
         motorBackRight = hardwareMap.get(DcMotor.class, "motorBackRight"); // 0
-        servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1"); // 1
-        servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2"); // 2
+        servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1");
+        servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2");
+        tapeRelease = hardwareMap.get(Servo.class, "tapeRelease");
+        tapeHold = hardwareMap.get(Servo.class, "tapeHold");
         Arm1 = hardwareMap.get(DcMotor.class, "Arm1"); // 0
-        Arm2 = hardwareMap.get(DcMotor.class, "Arm2"); // 1
+        Arm2 = hardwareMap.get(DcMotor.class, "Arm2"); // 1http://192.168.43.1:8080/?page=java/editor.html?/src/org/firstinspires/ftc/teamcode/Base/RobotStructure.java&pop=true
         chainMotor = hardwareMap.get(DcMotor.class, "chainMotor"); 
-
-        launcher.setPosition(0.70);
+        Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        chainMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
         Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         chainMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         tapeMotor = hardwareMap.get(DcMotor.class, "tapeMotor");
         dragBlock = hardwareMap.get(Servo.class, "dragBlock");
@@ -92,18 +104,21 @@ public class RobotStructure extends OpMode {
         Arm1.setPower(armPower);
         Arm2.setPower(armPower);  
         chainMotor.setPower(chainPower);
-        int encoderCount = Arm2.getCurrentPosition();
+       
+        int encoderCount = chainMotor.getCurrentPosition();
         telemetry.addData("encoder:", encoderCount);
         telemetry.update();
         
-        int armPositionScore = 1287;
-        int armPositionDrive = 92;
-        int armPositionGrab = -167;
-        int chainPositionScore = 0;
-        int chainPositionDrive = 0;
-        int chainPositionGrab = 0;
+        int armPositionScore = 1400;
+        int armPositionDrive = 419;
+        int armPositionGrab = 297;
+        int armPositionVertical = 1147;
+        int chainPositionScore = 905;
+        int chainPositionDrive = 1618;
+        int chainPositionGrab = 1970;
+        int chainPositionVertical = 1372;
         
-        if (gamepad2.a) {
+          if (gamepad2.b) {
             Arm1.setTargetPosition(armPositionScore);
             Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm1.setPower(.5);
@@ -114,13 +129,15 @@ public class RobotStructure extends OpMode {
             chainMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             chainMotor.setPower(.6);
         
-            while (Arm1.isBusy()) {
-                telemetry.addData("Moving to Score Position", "...");
-                telemetry.update();
+        long timeout = 2000;
+        long startTime = System.currentTimeMillis();
+        while (Arm1.isBusy() || chainMotor.isBusy() && (System.currentTimeMillis() - startTime < timeout)){
+            telemetry.addData("Moving to Position", "...");
+            telemetry.update();
         }}
 
         
-         if (gamepad2.x) {
+         if (gamepad2.a) {
             Arm1.setTargetPosition(armPositionGrab);
             Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm1.setPower(.5);
@@ -131,47 +148,117 @@ public class RobotStructure extends OpMode {
             chainMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             chainMotor.setPower(.6);
         
-        while (Arm1.isBusy()) {
-            telemetry.addData("Moving to Score Position", "...");
+        long timeout = 2000;
+        long startTime = System.currentTimeMillis();
+        while (Arm1.isBusy() || chainMotor.isBusy() && (System.currentTimeMillis() - startTime < timeout)){
+            telemetry.addData("Moving to Position", "...");
             telemetry.update();
         }}
         
-        if (gamepad2.y) {
+        if (gamepad2.x) {
             Arm1.setTargetPosition(armPositionDrive);
             Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm1.setPower(.5);
             Arm2.setTargetPosition(armPositionDrive);
             Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm2.setPower(.5);
-                        chainMotor.setTargetPosition(chainPositionScore);
+            chainMotor.setTargetPosition(chainPositionDrive);
             chainMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             chainMotor.setPower(.6);
         
-        while (Arm1.isBusy()){
-            telemetry.addData("Moving to Score Position", "...");
+      long timeout = 2000;
+        long startTime = System.currentTimeMillis();
+        while (Arm1.isBusy() || chainMotor.isBusy() && (System.currentTimeMillis() - startTime < timeout)){
+            telemetry.addData("Moving to Position", "...");
+            telemetry.update();
+        }}
+        
+         if (gamepad2.y) {
+            Arm1.setTargetPosition(armPositionVertical);
+            Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm1.setPower(.5);
+            Arm2.setTargetPosition(armPositionVertical);
+            Arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm2.setPower(.5);
+                        chainMotor.setTargetPosition(chainPositionVertical);
+            chainMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            chainMotor.setPower(.6);
+        
+        long timeout = 2000;
+        long startTime = System.currentTimeMillis();
+        while (Arm1.isBusy() || chainMotor.isBusy() && (System.currentTimeMillis() - startTime < timeout)){
+            telemetry.addData("Moving to Position", "...");
             telemetry.update();
         }}
 
-        int duration = 2000; // Duration in milliseconds
-
-if (gamepad1.rightBumper) {
-    long startTime = System.currentTimeMillis();
-    while (System.currentTimeMillis() - startTime < duration) {
-        double currentPos = launcher.getPosition();
-        double targetPos = 0.72; // Target position for the launcher servo
-
-        // Calculate the incremental position change based on time elapsed
-        double deltaPos = (targetPos - currentPos) * (System.currentTimeMillis() - startTime) / duration;
-
-        // Update the launcher servo position
-        launcher.setPosition(currentPos + deltaPos);
+        //  Launch Plane
+   if (gamepad1.right_bumper) {
+        launcher.setPosition(.945);
     }
-    // Set the launcher servo to the final target position
-    launcher.setPosition(targetPos);
+    
+// Plane initialization
+    if (gamepad1.left_bumper) {
+        launcher.setPosition(.9);
+    }
+    
+    // Release tape measure
+    if (gamepad2.right_bumper) {
+       // tapeRelease.setPosition(.39);
+        tapeHold.setPosition(.50);
+    }
+    
+     if (gamepad1.y) {
+       // tapeRelease.setPosition(.39);
+        tapeHold.setPosition(.70);
+    }
+    
+// Return tape servo, sweeper servos to home position
+    if (gamepad2.left_bumper) {
+        tapeRelease.setPosition(.43);
+    }
+    
+    
+if(gamepad1.x) {    //  Open Main
+//setClawPos(1, 1);opens 
+//servoClaw1.setPosition(0.55);
+servoClaw2.setPosition(0.485);
+}
+
+if(gamepad1.b) {     // Open Both
+servoClaw1.setPosition(0.62);    
+servoClaw2.setPosition(0.485);
+}
+
+if(gamepad1.a) {    //  Close both pixel holders
+// setClawPos(0.5, 0.5); closes
+//servoClaw1.setPosition(0.35);
+servoClaw2.setPosition(.705);    // 2nd Claw
+servoClaw1.setPosition(.375);    // Main claw
 }
 
 
-        
+    
+    
+        if (gamepad2.dpad_down)  {
+            tapeMotor.setPower(-1.0);
+        }
+        else if (gamepad2.dpad_up)  {
+            tapeMotor.setPower(1.0);
+        }
+        else  {
+            tapeMotor.setPower(0);
+        }
+         if (gamepad1.y)  {
+          // tapeMotor.setPower(-0.3);
+        }
+        int duration = 2000; // Duration in milliseconds
+
+//
+
+
+
+
+
         /*
         Plug in arm motor to slot 0 on expansion hub (Not control hub)
         Go into driver tablet, go to configuration, obhs, control hub portal -> expansion hub-> DC motors
@@ -208,10 +295,6 @@ if (gamepad1.rightBumper) {
         motorBackLeft.setPower(m);
         motorBackRight.setPower(-m);
     
-    }  public void setClawPos(double pos1, double pos2) {
-        servoClaw1.setPosition(pos1);
-        servoClaw2.setPosition(pos2);
-        
     } public void quickStop() {
         tapeMotor.setPower(0);
         motorFrontRight.setPower(0);
