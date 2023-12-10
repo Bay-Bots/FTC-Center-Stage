@@ -13,6 +13,13 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import android.graphics.Color;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 
 import java.util.List;
 
@@ -24,8 +31,9 @@ public class CenterstageAutonomous extends AutoRobotStruct {
     private VisionDetectorOne visionDetector;
     private long startTime;
     private boolean positionSet = false;
-    private imu imu;  // Use BNO055IMU for BHI260AP
+    private IMU imu;  // Use BNO055IMU for BHI260AP
     private Orientation lastAngles = new Orientation();
+    private startTime = System.currentTimeMillis();
 
     @Override
     public void runOpMode() {
@@ -141,7 +149,7 @@ public class CenterstageAutonomous extends AutoRobotStruct {
 }
 
 
-    private void moveTowardLine() {
+private void moveTowardLine() {
         while (!atLine && position > 0) {
             setDriverMotorPower(-0.11, -0.11, -0.11, -0.11);
             telemetry.addData("Moving to ", "LINE");
@@ -153,11 +161,11 @@ public class CenterstageAutonomous extends AutoRobotStruct {
                 atLine = true;
                 setDriverMotorZero();
                 return; // Exit the loop after reaching the line
-            }  else {
-            atLine = false;
+            } else {
+                atLine = false;
+            }
         }
-
-
+}
     public float[] readColor(ColorSensor colorSensor) {
         float hsvValues[] = {0F, 0F, 0F};
         colorSensor.enableLed(true); // Assuming you want to turn ON the LED
