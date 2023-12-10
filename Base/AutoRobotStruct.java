@@ -76,11 +76,6 @@ public class AutoRobotStruct extends LinearOpMode {
         sleep(100);
     }
 
-    public void setClawPos(double pos1, double pos2) {
-        servoClaw1.setPosition(pos1);
-        servoClaw2.setPosition(pos2);
-    }
-
     public void translateRight(double m) {
         motorFrontRight.setPower(-m);
         motorFrontLeft.setPower(m);
