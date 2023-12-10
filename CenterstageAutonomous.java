@@ -98,18 +98,13 @@ public class CenterstageAutonomous extends AutoRobotStruct {
                         positionSet = true;
                     }
                 }
-            } else if (!positionSet) {
+            } else if (!positionSet && ) {
                 // Assume position 3 after 5 seconds
                 position = 3;
                 positionSet = true;
             }
 
-            // Move to the line if position is valid
-            if (position > 0) {
-                moveTowardLine();
-            }
-        }
-
+// if code doesn't work add parenthesis.
         // Additional logic based on the detected position after reaching the line
         if (atLine && position > 0) {
             moveTowardLine();
@@ -133,7 +128,7 @@ public class CenterstageAutonomous extends AutoRobotStruct {
             }
         }
     }
-
+    }
     private void turnLeft(double targetAngle) {
         double initialAngle = getHeading();
         double currentAngle = initialAngle;
