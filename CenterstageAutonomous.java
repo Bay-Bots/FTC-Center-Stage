@@ -29,21 +29,41 @@ public class CenterstageAutonomous extends AutoRobotStruct {
     private double x;
     private double y;
     private VisionDetectorOne visionDetector;
-    private long startTime;
     private boolean positionSet = false;
     private IMU imu;  // Use BNO055IMU for BHI260AP
     private Orientation lastAngles = new Orientation();
     private long startTime = System.currentTimeMillis();
+     private void initializeIMU() {
+        try {
+            // Initialize IMU
+            BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
+            imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            imuParameters.loggingEnabled = true;
+            imuParameters.loggingTag = "IMU";
+            imu = hardwareMap.get(IMU.class, "imu");
 
+            if (imu.isGyroCalibrated()) {
+                telemetry.addData("IMU", "Calibration Complete");
+            } else {
+                telemetry.addData("IMU", "Calibration Failed");
+            }
+        } catch (Exception e) {
+            telemetry.addData("IMU Initialization Error", e.getMessage());
+            imu = null;
+        }
+        telemetry.update();
+    }
     @Override
     public void runOpMode() {
+        initRunner();
+        initializeIMU();
         visionDetector = new VisionDetectorOne(this);
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         // Rest of your code...
-
-        while (opModeIsActive() && !positionSet) {
+        waitForStart();
+        while (opModeIsActive()) {
             List<Recognition> recognitions = visionDetector.getRecognitions();
             visionDetector.telemetryTfod(this);
             telemetry.update();
@@ -60,16 +80,20 @@ public class CenterstageAutonomous extends AutoRobotStruct {
                     if (x > -10 && x < 290) {
                         telemetry.addData("Left position", ".");
                         telemetry.addData("Line = ", atLine);
+                        telemetry.update();
                         position = 1;
                         positionSet = true;
                     } else if (x > 300 && x < 575) {
                         telemetry.addData("Middle position", ".");
                         telemetry.addData("Line = ", atLine);
+                        telemetry.update();
+
                         position = 2;
                         positionSet = true;
                     } else {
                         telemetry.addData("Right position", ".");
                         telemetry.addData("Line = ", atLine);
+                        telemetry.update();
                         position = 3;
                         positionSet = true;
                     }
