@@ -33,7 +33,7 @@ public class CenterstageAutonomous extends AutoRobotStruct {
     private boolean positionSet = false;
     private IMU imu;  // Use BNO055IMU for BHI260AP
     private Orientation lastAngles = new Orientation();
-    private startTime = System.currentTimeMillis();
+    private long startTime = System.currentTimeMillis();
 
     @Override
     public void runOpMode() {
