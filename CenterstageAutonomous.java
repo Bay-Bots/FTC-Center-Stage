@@ -135,9 +135,11 @@ public class CenterstageAutonomous extends AutoRobotStruct {
     }
 
     private double getHeading() {
-        Orientation angles = imu.getAngularOrientation(AngleUnit.DEGREES);
-        return angles.firstAngle;
-    }
+    // Adjust the axes based on the actual orientation of the IMU on the robot
+    Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    return angles.firstAngle;
+}
+
 
     private void moveTowardLine() {
         while (!atLine && position > 0) {
