@@ -88,26 +88,24 @@ public class CenterstageAutonomous extends AutoRobotStruct {
 
         // Additional logic based on the detected position after reaching the line
         if (atLine && position > 0) {
+            moveTowardLine();
             if (position == 1) {
                 setDriverMotorPower(0.15, 0.15, 0.15, 0.15, 150);
-                sleep(500);
+                sleep(100);
                 turnLeft(90); // Turn left 90 degrees using gyro
-                moveTowardLine();
                 dragBlock.setPosition(0.5);
                 sleep(200);
             } else if (position == 2) {
-                // Move forward for position 2
-                setDriverMotorPower(0.15, 0.15, 0.15, 0.15, 150);
-                sleep(500);
+                sleep(100);
                 dragBlock.setPosition(0.5);
                 sleep(200);
-                setDriverMotorPower(0.15, 0.15, 0.15, 0.15, 400);
-                setDriverMotorPower(0.11, 0.11, 0.11, 0.11, 3000);
+                setDriverMotorPower(0.15, 0.15, 0.15, 0.15, 150);
             } else if (position == 3) {
-                // Turn right for position 3
+                setDriverMotorPower(0.15, 0.15, 0.15, 0.15, 150);
+                sleep(100);
+                turnRight(90); // Turn left 90 degrees using gyro
                 dragBlock.setPosition(0.5);
-                // Use the gyro to turn right
-                turnRight(90);
+                sleep(200);
             }
         }
     }
@@ -166,6 +164,15 @@ private void moveTowardLine() {
             }
         }
 }
+    private void moveToTouch() {
+        while (!leftSensor.isPressed() || !rightSensor.isPressed()) {
+            setDriverMotorPower(-0.11, -0.11, -0.11, -0.11);
+            if (leftSensor.isPressed() || rightSensor.isPressed()) {
+                setDriverMotorZero();
+                break;  // Add this line to exit the loop
+            }
+        }
+    }
     public float[] readColor(ColorSensor colorSensor) {
         float hsvValues[] = {0F, 0F, 0F};
         colorSensor.enableLed(true); // Assuming you want to turn ON the LED
