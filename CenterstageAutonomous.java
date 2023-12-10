@@ -24,7 +24,7 @@ public class CenterstageAutonomous extends AutoRobotStruct {
     private VisionDetectorOne visionDetector;
     private long startTime;
     private boolean positionSet = false;
-    private BNO055IMU imu;  // Use BNO055IMU for BHI260AP
+    private imu imu;  // Use BNO055IMU for BHI260AP
     private Orientation lastAngles = new Orientation();
 
     @Override
