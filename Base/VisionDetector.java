@@ -1,20 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 import org.firstinspires.ftc.teamcode.Base.AutoRobotStruct;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
 public class VisionDetectorOne extends AutoRobotStruct {
-
-    private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
-    private boolean detectionActive = true; // Track the detection status
+    public boolean detectionActive = true;
 
     public VisionDetectorOne(LinearOpMode opMode) {
         initTfod(opMode);
@@ -25,11 +23,7 @@ public class VisionDetectorOne extends AutoRobotStruct {
                 .setModelFileName("blue1.tflite")
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
-        if (USE_WEBCAM) {
-            builder.setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
+        builder.setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam1"));
         builder.addProcessor(tfod);
         visionPortal = builder.build();
     }
@@ -48,13 +42,9 @@ public class VisionDetectorOne extends AutoRobotStruct {
         return tfod.getRecognitions();
     }
 
-    public List<Recognition> getObjects() {
-        return tfod.getRecognitions();
-    }
-
     public void telemetryTfod(LinearOpMode opMode) {
         if (!detectionActive) {
-            return; // Skip telemetry if detection is not active
+            return;
         }
 
         List<Recognition> currentRecognitions = getRecognitions();
@@ -69,3 +59,6 @@ public class VisionDetectorOne extends AutoRobotStruct {
         opMode.telemetry.update();
     }
 }
+
+
+
