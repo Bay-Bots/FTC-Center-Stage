@@ -57,7 +57,6 @@ public class MainAutonomous extends AutoRobotStruct {
         initializeIMU();
         initRunner();  // Initialize hardware components
          // Initialize IMU
-        visionDetector = new VisionDetectorOne(this);
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
         // Rest of your code...
@@ -69,7 +68,6 @@ public class MainAutonomous extends AutoRobotStruct {
 
             if (System.currentTimeMillis() - startTime < 5000) {
                 List<Recognition> recognitions = visionDetector.getRecognitions();
-                visionDetector.telemetryTfod(this);
                 telemetry.update();
                 sleep(20);
 
@@ -110,26 +108,28 @@ public class MainAutonomous extends AutoRobotStruct {
 
             // Additional logic based on the detected position after reaching the line
             if (!atLine && position > 0) {
+                driveForward(1000);
                 moveTowardLine();
-                // driveForward(1200);
 
                 if (position == 1) {
+                    driveForward(100);
                     sleep(200);
                     turnLeft();
                     driveForward(200);
+                    sleep(200);
                     dragBlock.setPosition(0.5);
-                    sleep(1000);
-                    driveBackward(3000);
+                    sleep(200);
+                    driveBackward(2000);
+                    
                     
                 } else if (position == 2) {
                     // Move forward for position 2
                    // sleep(500);
-                   driveForward(150);
                     dragBlock.setPosition(0.5);
                     sleep(200);
-                     driveBackward(310);
+                    driveBackward(310);
                     turnLeft();
-                    driveBackward(2550); 
+                    driveBackward(2300); 
 
                     // moveToTouch();
 
@@ -188,11 +188,11 @@ private void turnRight() {
       // Gyro-based correction
       double correction = calculateCorrection(initialAngle, gyroSensor.getHeading());
 
-    while (System.currentTimeMillis() - startTime < 3500) {
-    setDriverMotorPower(0.20 + correction, 0.20 - correction, 0.20 + correction, 0.20 - correction);
-    }
+   // while (System.currentTimeMillis() - startTime < 3500) {
+    //setDriverMotorPower(0.20 + correction, 0.20 - correction, 0.20 + correction, 0.20 - correction);
+    //}
 
-    setDriverMotorPower(0.10 + correction, 0.10 - correction, 0.10 + correction, 0.10 - correction);
+    setDriverMotorPower(0.05 + correction, 0.05 - correction, 0.05 + correction, 0.05 - correction);
 
       telemetry.addData("Moving to ", "LINE");
 
