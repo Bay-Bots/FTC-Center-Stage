@@ -1,0 +1,90 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+@Autonomous(name = "Dual Control Example")
+public class DualControlExample extends OpMode {
+    
+    private DcMotor leftMotor;
+    private DcMotor rightMotor;
+    private DcMotor armMotor;
+
+    private Thread drivetrainThread;
+    private Thread armThread;
+    private boolean running = true;
+
+    @Override
+    public void init() {
+        // Initialize motors
+        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        armMotor = hardwareMap.get(DcMotor.class, "arm_motor");
+
+        // Set motor directions if necessary
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    @Override
+    public void start() {
+        // Start the drivetrain thread
+        drivetrainThread = new Thread(new DrivetrainTask());
+        drivetrainThread.start();
+
+        // Start the arm control thread
+        armThread = new Thread(new ArmTask());
+        armThread.start();
+    }
+
+    @Override
+    public void loop() {
+        // Main loop can contain other logic if needed
+        telemetry.addData("Status", "Running");
+        telemetry.update();
+    }
+
+    @Override
+    public void stop() {
+        // Stop the threads when the OpMode stops
+        running = false;
+        try {
+            drivetrainThread.join(); // Wait for the drivetrain thread to finish
+            armThread.join();        // Wait for the arm thread to finish
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class DrivetrainTask implements Runnable {
+        @Override
+        public void run() {
+            // Example: Move forward for 2 seconds
+            leftMotor.setPower(1.0);
+            rightMotor.setPower(1.0);
+            try {
+                Thread.sleep(2000); // Move for 2 seconds
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // Stop the motors
+            leftMotor.setPower(0);
+            rightMotor.setPower(0);
+        }
+    }
+
+    private class ArmTask implements Runnable {
+        @Override
+        public void run() {
+            // Example: Move the arm for 2 seconds
+            armMotor.setPower(0.5);
+            try {
+                Thread.sleep(2000); // Move the arm for 2 seconds
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // Stop the arm motor
+            armMotor.setPower(0);
+        }
+    }
+}
